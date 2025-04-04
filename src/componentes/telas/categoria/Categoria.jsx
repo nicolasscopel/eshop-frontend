@@ -8,14 +8,19 @@ import {
 import Tabela from './Tabela';
 // importação do componente Tabela
 import Formulario from './Formulario'
+import Carregando from '../../comuns/Carregando';
 
 function Categoria() {
 
     const [alerta, setAlerta] = useState({ "status": "", message: "" });
     const [listaObjetos, setListaObjetos] = useState([]);
+    // estado que controla a exibição da tela de carregamento
+    const [carregando, setCarregando] = useState(true);
 
     const recuperaCategorias = async () => {
+        setCarregando(true);
         setListaObjetos(await getCategoriasAPI());
+        setCarregando(false);
     }
 
     const remover = async (codigo) => {
@@ -75,6 +80,10 @@ function Categoria() {
         setObjeto({ ...objeto, [name]: value });
     }
 
+    
+
+  
+
 
 
     useEffect(() => {
@@ -88,8 +97,11 @@ function Categoria() {
             alerta, listaObjetos, remover, objeto, editarObjeto,
             acaoCadastrar, handleChange, novoObjeto, exibirForm, setExibirForm
         }}>
+            <Carregando carregando={carregando}>
             <Tabela />
-            <Formulario/>
+            </Carregando>
+            
+            <Formulario />
         </CategoriaContext.Provider>
     )
 
