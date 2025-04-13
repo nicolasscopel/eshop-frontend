@@ -7,6 +7,7 @@ import Menu from "./componentes/Menu";
 import Home from "./componentes/telas/Home";
 import Sobre from "./componentes/telas/Sobre";
 import Categoria from "./componentes/telas/categoria/Categoria";
+import Produto from "./componentes/telas/produto/Produto";
 
 
 
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
       {
         path : "categorias",
         element : <Categoria/>
+      },
+      {
+        path : "produtos",
+        element : <Produto/>
       }
 
     ]
