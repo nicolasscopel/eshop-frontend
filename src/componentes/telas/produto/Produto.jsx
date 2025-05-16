@@ -6,8 +6,15 @@ import Tabela from './Tabela';
 import Formulario from './Formulario';
 import Carregando from '../../comuns/Carregando';
 
+// importação
+import WithAuth from "../../../seguranca/WithAuth";
+import { useNavigate } from 'react-router-dom';
+
+
 
 function Produto() {
+
+    let navigate = useNavigate();
 
     const [alerta, setAlerta] = useState({ status: "", message: "" });
     const [listaObjetos, setListaObjetos] = useState([]);
@@ -15,9 +22,14 @@ function Produto() {
     const [carregando, setCarregando] = useState(true);
 
     const recuperaProdutos = async () => {
-        setCarregando(true);
-        setListaObjetos(await getProdutosAPI());
-        setCarregando(false);
+        try {
+            setCarregando(true);
+            setListaObjetos(await getProdutosAPI());
+            setCarregando(false);
+        } catch (err) {
+            // tratamento para ir para a tela de login em caso de erro
+            navigate("/login", { replace: true });
+        }
     }
 
     const recuperaCategorias = async () => {
@@ -26,27 +38,32 @@ function Produto() {
 
     const remover = async codigo => {
         if (window.confirm('Deseja remover este objeto?')) {
+            try {
             let retornoAPI = await deleteProdutoPorCodigoAPI(codigo);
             setAlerta({ status: retornoAPI.status, message: retornoAPI.message })
             recuperaProdutos();
+            } catch(err) {
+                // tratamento para ir para a tela de login em caso de erro
+                navigate("/login", { replace: true });
+            }
         }
     }
 
     useEffect(() => {
         recuperaProdutos();
-        recuperaCategorias();        
+        recuperaCategorias();
     }, []);
 
     const [editar, setEditar] = useState(false);
     const [exibirForm, setExibirForm] = useState(false);
 
-	const [objeto, setObjeto] = useState({
+    const [objeto, setObjeto] = useState({
         codigo: 0,
         nome: "",
         descricao: "",
-		quantidade_estoque: "",
-		valor: "",
-		ativo: "",
+        quantidade_estoque: "",
+        valor: "",
+        ativo: "",
         data_cadastro: new Date().toISOString().slice(0, 10),
         categoria: ""
     })
@@ -68,10 +85,15 @@ function Produto() {
     }
 
     const editarObjeto = async codigo => {
+        try{
         setObjeto(await getProdutoPorCodigoAPI(codigo))
         setEditar(true);
         setAlerta({ status: "", message: "" });
         setExibirForm(true);
+        } catch(err){
+            // tratamento para ir para a tela de login em caso de erro
+            navigate("/login", { replace: true });
+        }
     }
 
     const acaoCadastrar = async e => {
@@ -86,6 +108,8 @@ function Produto() {
             }
         } catch (err) {
             console.error(err.message);
+            // tratamento para ir para a tela de login em caso de erro
+            navigate("/login", { replace: true });
         }
         recuperaProdutos();
     }
@@ -112,4 +136,4 @@ function Produto() {
     );
 }
 
-export default Produto;
+export default WithAuth(Produto);
